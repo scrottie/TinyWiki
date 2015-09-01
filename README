@@ -1,0 +1,64 @@
+TinyWiki:  a user-editable online area: a knock off of Ward Cunningham's WikiWiki, written in under a hundred lines of Perl.
+
+This is the Wiki that powers http://perldesignpatterns.com.  More documentation and mark-up rules (which closely follow the original WikiWiki) are at http://perldesignpatterns.com/?TinyWiki.  There's a sandbox at http://perldesignpatterns.com/?SandBox.
+
+To create a new page, put in a plain-text StudleyCaps word and it will become a link.  Click on the new link and define the new page. Links to existing pages are made by the mere mention of their StudleyCaps name.
+
+Each script is capable of spitting out its own source code. Think of it as human-assisted-propagation.  Append ?self to the base URL.
+
+There is currently no HTML filtering, so users could create obnoxious Java Script etc.  Don't put this on the same domain that issues cookies that could be exposed.
+
+Many features are implemented by use of additional scripts that may 'require' wiki.cgi.  wiki.cgi works as a stand-alone script or as a module usable by other cgi scripts.
+
+Features:
+
+Text Formatting
+
+    Indented texts formatting is preserved.
+    Many text parsing rules are disabled for indented (preformatted) text blocks to allow code to display unmolested.
+    Asterisk starting lines get turned into bullet points.
+    Indented asterisks are second level bullet points.
+    Four dashes on the start of a line creates a horizontal rule.
+    ISBN is munged into a link to Barnes & Nobles.
+    Foo::Bar style Perl module names are munged into links to CPAN.
+    Double-underscores around text underlines it.
+    Double-slashes around text italicizes it.
+    Double-vertical-bars around text bolds it.
+    UUencoded data pasted into a page is turned into a link to image.cgi. image.cgi extracts it and presents it as an image.
+    Square brackets around text moves it to the end of the page as a footnote and replaces it with a link to the anchor.
+    WikiWords can be qualified to a specific Wiki, eg Wiki:WikiSquatting - see Inter Map 
+    Contents of <% .. %> blocks get executed as Perl in a semi-restricted environment (user beware!), with some functions defined for 'use'ing and writing to other pages in restricted ways
+
+Auxillary Scripts
+
+    Most auxillary scripts are linked to from the page footer, Wiki Footer
+    assemble.cgi: Words can be expanded in-line for a printable (eg) version:
+    recent.cgi: Recently changed pages
+    spell.cgi: Spell checking. Currently doesn't handle plurals, as plurals aren't in /usr/share/dict/words. Have to work around that.
+    orphans.cgi: All words sorted by number of references from 0:
+    metric.cgi: Trust metrics: http://www.perldesignpatterns.com/metric.cgi?HomePage for instance. See Advo Wiki for more information.
+    everything.cgi: Complete list of keywords is at
+    diff.cgi: View previous revisions of a page
+    podparser.pl: Primarily for command line use. Splits out Perl Doc from the Wiki source files starting with a root page, like assemble.cgi
+    image.cgi: decodes UUencoded blocks of image data in a page and displays it with the correct MIME header - linked to by wiki.cgi using img src
+    intermap.cgi: translates Wiki:WikiSquatting style links to a real URL and redirects to it
+    fogindex.cgi: computes readability indexes on pages using Lingua::EN::Fathom and generates a report - not suitable for online use - too CPU intensive 
+
+Active Wiki Pages Features
+
+    Wiki Word munged into a Google search link via Active Wiki Pages code in Wiki Footer
+    See Other Wiki links to WikiWiki:WikiWiki when a page with the same name exists there
+    Pages Linking Here modifies pages to link back to any page linking to it 
+
+Misc
+
+    All Wiki-related scripts display their source when passed the ?self CGI argument.
+    Active Wiki Pages - pages may contain embedded Perl that runs on the server when the page is displayed - most new features will be implemented in terms of this
+    Token and state based grammar using Perl's m/\G/g trick for cleanliness and easy addition of new rules. 
+
+Thanks To
+
+Tiny Wiki uses code from Randal Schwartz in fogindex.cgi, code from Doug Miles and from Moogle Stuffy Software in diff.cgi, with bug fixes and contributions in wiki.cgi from Alex Schroeder and other people whose names I hope I remember soon... oops.
+
+Copyright (c) Scott Walters, scott@illogics.org, and others as noted. Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.1 or any later version published by the Free Software Foundation. A copy of the license is available at www.gnu.org/licenses/fdl.txt. By posting to this site, you agree to place all submitted content under the Free Documentation License.
+

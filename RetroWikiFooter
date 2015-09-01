@@ -1,0 +1,128 @@
+This is the footer that is used on every page. It gets sb_used()'d, so this text doesn't show up,
+only the output from the first ActiveWikiPages code block. See also TinyWiki, WikiHeader, ActiveWikiPages, SeeOtherWiki.
+
+<%
+
+  print <<FOOTER;
+
+<!-- end content (the content is dead... long live the content!) -->
+
+</td>
+
+<!-- <td valign="top" align="right"></td>  ads went here.  that's always a bust.  -->
+
+</tr></table>
+
+FOOTER
+
+  sub sb_search { grep { sb_read($_) =~ m/\Q$_[0]\E/ } sb_listall() }
+  
+  if($word =~ /Category/ and $action eq 'view') {
+    print qq{\n<br><hr>\n<b>$spaced Links:</b>\n};
+    sb_parse ( join "\n", map "* $_", sb_search( $word ) );
+    print "\n";
+  }
+  
+  # foot notes
+
+  if($footnotes) {
+    print qq{\n<br><hr>
+\n<b>Footnotes:</b> <small>(click a footnote number to return to where it's used)</small> <br>\n};
+    sb_parse($footnotes) 
+  }
+
+  # user comments
+  
+  # so that this page can itself be edited in a textarea
+  my $textarea = '<text' . 'area name="commenttext" wrap="virtual" rows="8" cols="80">'; 
+  my $endtextarea = '<' . '/text' . 'area>'; 
+  
+  if ( 0 and $word ne 'HomePage' and $text !~ m/<!-- no user comments -->/ and $ENV{HTTP_USER_AGENT} !~ m/Windows/) {
+    if($comment eq 'save') {
+      last if $page eq 'HomePage';
+      if(! $commenttext) {
+	print qq{<font color="red"><b>Nothing to save - error</b></font><br>\n};
+	last;
+      }
+      my $newtext = join('',
+	$commenttext, "\n", '- //', scalar localtime(), ' ',
+	$ENV{REMOTE_ADDR}, "//\n\n"
+      );
+      # my $fh = sb_open($word); seek $fh, 0, 2; # seek to end for append print $fh $newtext;
+      my $inspos;
+      my $copy = sb_read($word);
+      if($copy !~ m/cut - end comments/) {
+	$inspos = index($copy, 'External Pages Linking '); $inspos-- if $inspos > 0;
+	$inspos == -1 and $inspos = index($copy, '<!-- cut here - do not remove');
+	$inspos == -1 and $inspos = length $copy;
+	substr $copy, $inspos, 0, "\n||Comments||\n\n<!-- cut - end comments -->\n";
+      }
+      $inspos = index $copy, '<!-- cut - end comments';
+      $index == -1 and $inspos = length $copy;
+      substr $copy, $inspos, 0, $newtext;
+      sb_save($copy);
+      sb_commit($word);
+      my $rand = int rand 65536; # bust the cache
+      $comment_status = qq{
+	<font color="red"><b>Comment Saved!</b> Thanks for contributing.</font>
+	<br><small><a href="?$word&rand=$rand"> Your comment will appear the next time you view this page.</a></small><br><br>
+      }; 
+    } 
+
+    0 and print qq{
+      <br><hr>
+      <a name="add_comment"></a>
+      $comment_status
+      <form method="post" action="wiki.cgi?$word#add_comment" > 
+      <table border=0 bgcolor="#CCCCCC" cellpadding=3><tr><td>
+      <b>Add a Comment to the $word Page:</b><br>
+      <small> <a href="?CommentsHelp" target="helpwin">Formatting tips and site conventions are shown in CommentsHelp (new window)</a>.</small>
+      </td><td>
+	<input type="submit" value="Save Comment">
+      </td></tr>
+      <tr><td colspan=2>
+      $textarea$endtextarea
+      </td></tr></table>
+      <input type="hidden" name="comment" value="save">
+      </form>
+    } unless $action eq 'edit';
+  }
+
+  # footer links
+
+  ($urlenc = $word) =~ s/(?<=[a-z])([A-Z])/+$1/g;
+
+  print qq{
+<br><hr>
+<small><small>
+Copyright (c) Scott Walters, scott\@illogics.org, and others as noted. 
+Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.1 or any later version published by the Free Software Foundation. A copy of the license is available at 
+<a href="http://www.gnu.org/licenses/fdl.txt">www.gnu.org/licenses/fdl.txt</a>.
+By posting to this site, you agree to place all submitted content under the 
+Free Documentation License.<br>
+
+};
+
+  # referrers
+
+  # if another site is linking to use, fire up PagesLinkingHere to back-link
+
+  # my $ref = $ENV{HTTP_REFERER} || '';
+  # my $outsideref = 1; 
+  # $outsideref = 0 if $ref =~ m{^http://wiki\.slowass\.net/}i;
+  # $outsideref = 0 if $ref =~ m{^http://perldesignpatterns\.com/}i;
+  # $outsideref = 0 if $ref =~ m{^http://www\.perldesignpatterns\.com/}i;
+  # $outsideref = 0 if $ref =~ m{^http://matthew\.cavalletto\.org/}i;
+
+  # sb_use('PagesLinkingHere') if $ref && $outsideref && -s $word;
+
+  print qq{
+    </small></small>
+    </body>
+  };
+
+%>
+
+Pages Linking to This Page:
+
+<!-- cut here - do not remove this comment -->

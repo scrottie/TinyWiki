@@ -1,0 +1,318 @@
+This is the header that is used on every page. It gets sb_used()'d, so this text doesn't show up,
+only the output from the first ActiveWikiPages code block. See also TinyWiki, WikiFooter, ActiveWikiPages, SeeOtherWiki.
+
+//describeword()// is called when a page is blank, if defined. What it returns is what is used as the initial
+text of the page, usually a message suggesting that the user should define the page. //$1// contains the
+name of the page linking to the current page, if any. It looks for a WikiWord on the REFERER URL. This
+means it might pick up a WikiWord from a distant Wiki. You should take a better look at the REFERER
+and decide if you want to link to just that page or to another Wiki or site entirely.
+
+//editform()// is called when a page is edited, either when it didn't exist at all or when it is being
+changed. Since this header can't easily tell which case it is, we don't do that test ourselves,
+but instead let TinyWiki do so and call us back.
+
+<%
+
+  if($ENV{HTTP_USER_AGENT} =~ m/Wget/i or
+     $ENV{HTTP_USER_AGENT} =~ m/Offline Exporer/i) {
+    print "Fuck you, asshole. If you can't read, why would you want to download
+           everything, anyway? I SAID, Wiki is a CGI program and Wget etc will 
+           run forever, getting redundant copies, spellchecked versions, voting
+           for each page 10 times, recusively expanding each page, and dozens of 
+           other things. Use a download link on the main page and be glad that 
+           your stupidity doesn't get you automatically instantly firedwalled.\n";
+    # print "Location: http://$ENV{SERVER_NAME}/DO_NOT_USE_WGET_IT_WILL_RUN_FOREVER_see_the_main_page_for_other_ways_to_download_everything\n\n" ; 
+    print "Debug: user agent: $ENV{HTTP_USER_AGENT}<br>\n";
+    exit 0;
+  };
+
+  my $shitlist = sb_open('ShitListPublic'); seek $shitlist, 0, 0;
+  while(<$shitlist>) {
+      chomp; 
+      my $rip = $rip;
+      while($_ =~ /\.\*$/) {
+          $_ =~ s/\.\*$//;  $rip =~ s/\.[0-9]+$//;
+      }
+      if($_ and $_ eq $rip) {
+          print qq{
+              You've been banned!  Go away, leave me alone.<br><br>
+              Were you spamming? Fuck off. Fuck off and die. You're robbing, 
+              making pocket change at the expense of my time and effort -- time that could
+              be spent writing Free Software for everyone to use and enjoy.<br><br>
+              Were you trying to download the site?<br><br>
+              HomePage clearly instructed you to download the .tar.gz of everything. 
+              Instead, you run a robot that asks TinyWiki to render each page, vote for each page 10
+              times, spell checks each page, computes the reverse links on each page, 
+              and recursively expands each page in line -- for 3,000 pages. 
+              If you'd just have run a spider that obeyed robots.txt I'd have let it slide,
+              even though it takes *hours* of CPU time to render the entire site.
+              That wasn't very nice of you. 
+              Because of people like you, robots consume 4 times as much bandwidth
+              as people. 
+              Well, us people are taking the site back. Good bye and good riddance.
+              -scott
+          };
+          exit 0;
+      }
+  }
+
+  #if($ENV{HTTP_USER_AGENT} =~ m/MSIE/ 
+  #   and $ENV{HTTP_USER_AGENT} !~ /Opera/ 
+  #   and 
+  #   ( grep($action eq $_, 'edit', 'save') or $submit)
+  #) {
+  #    print qq{<font color="red">Denied. Posting disabled. You fall into a class of user I don't want to deal with. Have a nice day.</font>\n};
+  #    exit 0;
+  #}
+
+  #if($action eq 'save' and $password ne 'brock2') {
+  #    print qq{<font color="red">Wrong password.</font><br><br>\n};
+  #    print qq{Please email the site maintainer and request the password if you'd like to contribute.\n};
+  #    exit 0;
+  #}
+  if($action eq 'save') {
+      my $cap = eval { captcha(); } || $@;
+      # print "Captcha results:  $cap;<br>\n";
+      $cap =~ m/true/ or do { print "captcha no go: $cap"; exit 0; };
+  }
+
+  my $ref = $ENV{HTTP_REFERER};
+  if($ref =~ m/\.msn\./) {
+      print qq{
+        Out of protest for MSN's ("Microsoft Network") abusive manipulation of search
+        results to prop up their own monopoly, and since this site is likely to 
+        be exluded from the results in favor of pro-VBA, pro-C# marketing spooge,
+        this page is not being displayed. If you want to see this page or indeed you
+        want to see pages supporting anything in competition to Microsoft's numerous
+        and varied offerings, I strongly encourage you to use 
+        <a href="http://www.google.com">Google</a>. Google does not tamper
+        with their listings to attack their competition nor are their listings
+        based on who paid them what like most other search engines.
+      };
+      exit;
+  }
+
+  0 and print qq{Content-type: text/html\r\n\r\n}; # this is getting shuffled all over rthe place
+
+  ($urlenc = $word) =~ s/(?<=[a-z])([A-Z])/+$1/g;
+  ($spaced = $word) =~ s/(?<=[a-z])([A-Z])/ $1/g;
+
+  # HTML head 
+
+  print qq{
+    <head><title>$spaced at Perl Design Patterns Wiki</title>
+      <style> PRE { margin-left: 12px; margin-right: 12px; background: #EEEEDD } </style>
+  };
+
+  # google et el shouldn't index the edit form
+  # google et el shouldn't index undefined pages, including very small pages
+  print '  <meta name="robots" content="noindex, nofollow">', "\n" 
+    if $text =~ m/Describe '.*?' here/ or length($text) < 160 or $action eq 'edit';
+
+  print '  </head>';
+
+  # HTML body
+
+  print qq{<body bgcolor="white">};
+
+ print <<"HEADER";
+<table border="0" bgcolor="#99CCCC" width="100%">
+  <tr>
+    <td align="center" width="40"><a href="$sn?HomePage"><img src="back1.png" border="0" height="32" width="32"></a></td>
+    <td align="left">
+         <a href="$sn?HomePage"><font size="+2" color="black" style="text-decoration: none">Perl Design Patterns TinyWiki</font></a><br>
+         <nobr>
+          <small>
+          &#183; <a href="$sn?HomePage">Home</a>
+          &#183; <a href="$sn?PerlDesignPatterns">Pattern Catalog</a>
+          &#183; <a href="$sn?PatternIndex">Problem Index</a>
+          &#183; <a href="$sn?CategoryCategory">Category Index</a>
+          &#183; <a href="$sn?RecentChanges">Recent Changes</a>
+          </small>
+         </nobr>
+     </td><td align="right" valign="top">
+         <nobr><!-- Google CSE Search Box Begins  --><form id="searchbox_008460622897519070852:y7eldaa9tzq" action="http://www.google.com/search"><input type="hidden" name="cx" value="008460622897519070852:y7eldaa9tzq" style="padding: 0;" /><input type="hidden" name="cof" value="FORID:0" /><input name="q" type="text" size="24" /><input type="submit" name="sa" value="Search" style="padding: 0;" /><img src="http://www.google.com/coop/images/google_custom_search_smnar.gif" alt="Google Custom Search" style="padding: 0;"/></form><!-- Google CSE Search Box Ends --></nobr>
+    </td>
+  </tr>
+
+  <!-- <td align=right><form action="$sn"><input name=word size=24 value="$spaced"><input type=submit value="Go"></form></td> -->
+        
+</table>
+HEADER
+
+  print <<"HEADER";
+<table border="0" width="100%"><tr valign=top>
+  <td><font size="+3" color="black"><b>$spaced</b></font></td>
+  <td align=right><small>
+HEADER
+
+  if ( $action eq 'edit' ) {
+      print <<"HEADER";
+      <b>You Are In Edit Mode</b><br>
+      &#183; <a href="$sn?$word">Cancel and return to $word without saving changes</a><br><br>
+      <!-- <font color="red">Sorry, ReCaptcha is failing... saving doesn't work.  *sigh*</font> -->
+HEADER
+  }
+
+  if ( $action eq 'reverse' ) {
+      print <<"HEADER";
+      <b> Showing Local Pages that Link to This One</b><br>
+      &#183; <a href="$sn?$word">Cancel and return to display of $word</a><br><br>
+HEADER
+  }
+
+  if ( $action eq 'view' or $action eq 'save' ) {
+
+     if($ENV{HTTP_USER_AGENT} =~ m/MSIE/ and $ENV{HTTP_USER_AGENT} !~ /Opera/) {
+         print qq{<a href="iesucks2.html"><font color="red">Important security warning about Internet Explorer and this site</font></a><br>};
+     }
+
+if(0) {
+    unless ( $word eq 'HomePage' or $text =~ m/<!-- no user comments -->/ ) {
+      print <<"HEADER";
+&#183; <a href="#add_comment">Add a Comment</a>
+HEADER
+    }
+}
+    
+      print <<"HEADER";
+<form method="post" action="$sn?$word&action=edit"><input type="hidden" name="action" value="edit"><input type="submit" value="Edit This Page"></form>
+<form method="post" action="diff.cgi?$word"><input type="submit" value="Previous Versions"></form>
+<form method="post" action="reverse.cgi?$word"><input type="submit" value="Pages Linking to This Page"></form>
+<!-- &#183; <form method="post"><button type="text">a href="$sn?$word&action=edit" rel="nofollow">Edit This Page</a> -->
+<!-- &#183; <a href="diff.cgi?$word">Previous Versions</a> -->
+<br>
+<!-- &#183; <a href="reverse.cgi?$word">Pages Linking to This Page</a> -->
+<!-- &#183; <a href="assemble.cgi?$word">Assemble Page with Links Included</a> -->
+<!-- &#183;&nbsp;<a href="spell.cgi?$word">Check Spelling</a>  -->
+<!-- &#183;&nbsp;<a href="metric.cgi?HomePage&$word">Trust Metric</a> -->
+<!-- &#183;&nbsp;<a href="http://www.c2.com/cgi/wiki?$word">$word on WikiWiki</a> -->
+HEADER
+      # It doesn't make sense to provide search or wiki-xrefs for home page, etc.
+      unless ( $word =~ /\A(HomePage)\Z/ ) {
+	print <<"HEADER";
+  <br>
+  &#183; Search for this term on: 
+    <a href="http://www.google.com/search?hl=en&ie=UTF-8&oe=UTF-8&btnG=Google+Search&q=$urlenc">Google</a>,
+    <a href="http://search.cpan.org/search?mode=all&query=$urlenc">CPAN</a>,
+    <a href="http://perlmonks.org/index.pl?node_id=3989&n0=0&BIS=+&BH=1&go=Search&BIT=$urlenc">Perl Monks</a>
+HEADER
+
+	# do sister site links
+	# from SeeOtherWiki, modified
+	my $fh = sb_open('WikiWikiList');
+	sub flup {
+	  my $start = shift;
+	  my $stop = shift;
+	  my $mid = int(($start + $stop) / 2);
+	  return 0 if $start == $mid or $stop == $mid;
+	  seek $fh, $mid, 0;
+	  <$fh>;
+	  my $line = <$fh>; chomp $line;
+	  return flup($start, $mid) if(($word cmp $line) == -1);
+	  return flup($mid, $stop) if(($word cmp $line) == 1);
+	  return 1;
+	}
+	
+	if(flup(0, 358542)) {
+	  # if(flup(0, -s $fh)) 
+	  print qq{<br>\xb7 Other Wikis about $word: <a href="http://c2.com/cgi/wiki?$word">WikiWiki</a>\n};
+	}
+      }
+      
+      #print qq{<br>\xb7 Rate This Page: Bad < }, 
+#	map({ qq{<a href="rate.cgi?RateThisPage&voteword=$word&vote=$_">$_</a> } } (1..10)), " > Good<br>\n" 
+#	unless $page eq 'RateThisPage';
+
+  }
+  
+  print <<"HEADER";
+</small>
+</table>
+HEADER
+
+
+if($action eq 'edit') {
+    0 and print qq{
+        <font color="red">Pardon!</font><br><br>
+        I'm sorry to have to lock the site down. 
+        Quite a lot of automated bots were spamming.
+        Banning IPs was useless.
+        No one else seems to be helping me regress vandalized pages, and I can't keep up, and I
+        certainly don't want the spammers to be able to keep their ads up. 
+        There are a few of you guys that were extremely kind to fix errors in my code, spelling, and grammar.
+        Thank you.
+        Thanks to those of you who wrote little articles.
+        Please don't hestitate to email me and ask for the password.
+        I'm very much looking forward to checking the recent changes and finding only helpful changes.<br><br>
+        - <a href="wiki.cgi?ScottWalters">Scott Walters</a><br><br>
+    };
+    $form_extra = qq{
+        <script type="text/javascript" src="http://api.recaptcha.net/challenge?k=6LcwFQAAAAAAAKUPwX5_lhnIebuXTvGiSGEUMH7R">
+        </script>
+
+        <noscript>
+           <iframe src="http://api.recaptcha.net/noscript?k=6LcwFQAAAAAAAKUPwX5_lhnIebuXTvGiSGEUMH7R" height="300" width="500" frameborder="0"></if
+rame><br>
+           <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+           </textarea>
+           <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+        </noscript>
+    };
+}
+
+  # goto SKIP_IT;
+
+  # inline image related rules
+
+  a3 sub { $text =~ m/\G(?<=\n)end.*?\n/cogs or return; $state = \&s0; 1; };
+  a3 sub { $text =~ m/\G(?<=\n).*?\n/cogs or return; 1; }; # eat up -- no op
+  a0 sub { $text =~ m/\G(?<=\n)begin [0-9]+ ([\w.-]+)\n/cogs or return; $state=\&s3; print qq{<image src="image.cgi?$word&$1">}; 1; };
+
+  i0 i1 i2 sub { $text =~ m/\G([A-Z][\w-]+)::([:\w]+)/cogs or return; print qq{<a href="http://www.cpan.org/modules/by-module/$1/">$1</a>::<a href="http://search.cpan.org/search?module=$1::$2">$2</a>}; 1; };
+
+  a0 a2  sub { $text =~ m/\GC2\s+($wiki)/cogs or return; print qq{<a href="http://c2.com/cgi/wiki?$1">C2 $1</a>}; 1; };
+
+  # footnotes
+  # no footnotes in italics, bold, underline, etc regions - protect italicised Perl code!
+  # not sure why this doesn't work, haven't really played with it yet
+  a0 a2 sub { 
+    $text =~ m/\G\[(.*?)\]/cogs or return;
+    $typeface ? '[' . $2 . ']' : do {
+        $foot++; 
+        $footnotes .= qq{<a name="footnote$foot" href="#ref$foot">$foot</a>: $2\n\n}; 
+	print qq{<a href="#footnote$foot" name="ref$foot">[$foot]</a>};
+    };
+    return 1;
+  };
+
+  # i love q{} and qq{}. 
+
+  a0 sub { 
+    $text =~ m{\G(?<=\n)(?:/\\){4}(.*?\n)(.*?)\n(?:/\\){4}.*?\n}cogs or return;
+    my $x = $2; 
+    $x =~s/ +/ /g; 
+    $x =~ s/([^a-zA-Z0-9_])/uc sprintf("%%%02x", ord($1))/egs; 
+    print qq{<img src="http://perldesignpatterns.com/diagram.cgi?$x">};
+    return 1;
+  };
+
+  a0 a2 sub { $text =~ m{\G(?<!")(http://\S+\.(gif|jpe?g))\b}cogs or return; print qq{<img src="$1">}; 1; };
+
+  # a0 sub { $text =~ m{\G(?<=\n)\| }cogs or return; $state=\&s4; print qq{<table cellspacing=3 cellpadding=3><tr><td>}; 1; };
+  # a4 sub { $text =~ m{\G(?<= )\|(?:\n)\| }cogs or return; print qq{</td></tr><tr><td>}; 1; };
+  # a4 sub { $text =~ m{\G(?<= )\|\n(?:[^\|])}cogs or return; $state=\&s0; print qq{</td></tr></table><br>}; 1; };
+  # a4 sub { $text =~ m{\G(?<= )\| }cogs or return; print qq{</td><td>}; 1; };
+
+
+SKIP_IT:
+
+  print <<"HEADER";
+<table border="0" width="100%"><tr><td valign="top">
+    <!-- page here... -->
+HEADER
+
+
+  1;
+
+%>

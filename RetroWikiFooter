@@ -109,10 +109,7 @@ Free Documentation License.<br>
 
   # my $ref = $ENV{HTTP_REFERER} || '';
   # my $outsideref = 1; 
-  # $outsideref = 0 if $ref =~ m{^http://wiki\.slowass\.net/}i;
-  # $outsideref = 0 if $ref =~ m{^http://perldesignpatterns\.com/}i;
-  # $outsideref = 0 if $ref =~ m{^http://www\.perldesignpatterns\.com/}i;
-  # $outsideref = 0 if $ref =~ m{^http://matthew\.cavalletto\.org/}i;
+  # $outsideref = 0 if $ref =~ m{^http://wiki\.example\.com/}i;
 
   # sb_use('PagesLinkingHere') if $ref && $outsideref && -s $word;
 

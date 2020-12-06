@@ -1,6 +1,6 @@
 TinyWiki:  a user-editable online area: a knock off of Ward Cunningham's WikiWiki, written in under a hundred lines of Perl.
 
-This is the Wiki that powers http://perldesignpatterns.com.  More documentation and mark-up rules (which closely follow the original WikiWiki) are at http://perldesignpatterns.com/?TinyWiki.  There's a sandbox at http://perldesignpatterns.com/?SandBox.
+This is the Wiki that formerly powered perldesignpatterns dot com before the site was let go and porn site spammers bought it.  More documentation and mark-up rules (which closely follow the original WikiWiki) in theTinyWiki page.
 
 To create a new page, put in a plain-text StudleyCaps word and it will become a link.  Click on the new link and define the new page. Links to existing pages are made by the mere mention of their StudleyCaps name.
 
@@ -36,7 +36,7 @@ Auxillary Scripts
     recent.cgi: Recently changed pages
     spell.cgi: Spell checking. Currently doesn't handle plurals, as plurals aren't in /usr/share/dict/words. Have to work around that.
     orphans.cgi: All words sorted by number of references from 0:
-    metric.cgi: Trust metrics: http://www.perldesignpatterns.com/metric.cgi?HomePage for instance. See Advo Wiki for more information.
+    metric.cgi: Trust metrics.
     everything.cgi: Complete list of keywords is at
     diff.cgi: View previous revisions of a page
     podparser.pl: Primarily for command line use. Splits out Perl Doc from the Wiki source files starting with a root page, like assemble.cgi

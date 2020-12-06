@@ -1,0 +1,329 @@
+A WikiWiki:WikiWiki style user-editable online area: 
+a knock off of WikiWiki:WardCunningham's WikiWiki:WikiWikiWeb
+at http://c2.com/cgi/wiki , written in under a hundred lines of Perl.
+The code is available: See below.
+
+In a nutshell, click the graphic on the top of the screen to get back to
+the HomePage from anywhere. Feel free to edit pages. Play around in the
+SandBox if you want to experiment, then make a GuestLog entry. To create a new page:
+* Put a reference to it in an existing page. Just put in a plain-text StudleyCaps
+word and it will become a link. 
+* Click on the new link and define the new page. Links to existing pages are made by the mere mention of their StudleyCaps name.
+
+See WhyWikiWorks and WikiFun for more information on Wiki and other
+Wiki codebases, or keep reading for 
+more about TinyWiki. TinyWikiFour has links to historic versions and
+versions unburdoned by all of my local parser rules.
+
+||How?||
+
+How did I write a Wiki in under 100 lines?
+Not exactly on par with DamianConway, but I wrote compact code, did the
+SimplestThingPossible, and most of all, didn't make any arrangements for
+modularity, resigning myself to refactor constantly. You could say TinyWiki
+is a study in constant refactoring. WriteWhatYouMean.
+
+This version saves documents to CVS, but does tolerate not having it. 
+
+See ||Features|| below to learn what is available in the way of formatting
+text, then play with editing in SandBox.
+http://ipaterson.ca/wiki/wiki.cgi?FormattingInTinyWiki has a very nice
+quick reference for TinyWiki formatting.
+
+//TinyWikiFormatting is now stored on slowass.net --IanPaterson//
+
+||Why?||
+
+Why another Wiki? Because the free Wiki clone I had been using was 4,000
+lines long, which is about 3,900 too many. It took ages to load. It was
+tied to the goofy .dbm format so I couldn't easily write scripts to
+import/export. Wanted something easy to hack on. See TinyWikiMotivation.
+
+||Who?||
+
+ScottWalters. Just another perl hacker. See http://www.slowass.net/phaedrus/ for more.
+
+||Where?||
+
+Each script is capable of spitting out its own source code. Think of it
+as human-assisted-propagation. Want to practise software husbandry?
+
+* http://www.example.com/wiki.cgi?self
+* http://www.example.com/assemble.cgi?self
+* http://www.example.com/metric.cgi?self
+* http://www.example.com/reverse.cgi?self
+* http://www.example.com/spell.cgi?self
+* http://www.example.com/orphans.cgi?self
+* http://www.example.com/recent.cgi?self
+* http://www.example.com/image.cgi?self
+* http://www.example.com/diff.cgi?self
+* http://www.example.com/intermap.cgi?self
+* http://www.example.com/podparser.pl?self
+* http://www.example.com/fogindex.cgi?self
+
+Be advised - in the spirit of tininess, important things are missing. 
+There is currently no HTML filtering, so users could create obnoxious
+JavaScript etc. WikiWiki has different
+text processing rules - I didn't find WikiWiki:WikiWiki 's intuitive. Sorry.
+Pages can not be completely deleted - that would interfere with fetching
+previous versions, and a philosophy exists that web pages should //never//
+just vanish, but should instead be replaced with a page linking to where
+the content moved.
+
+In the spirit of DesignPatterns, I firmly hold true the notion that it is more
+important to be able to hack features on than have every conceiveable feature 
+simply because every feature isn't conceivable and attempts to conceive of them
+litter the code with thousands of attempts almost all of which miss the mark. 
+To the degree that it's possible, new features are implemented as separate 
+scripts. I want to push the limit of what is possible. With the 
+advent of ActiveWikiPages, most features are being implemented as code
+buried in pages. Some auxillary scripts may be converted to ActiveWikiPages.
+
+||Features: ||
+
+* Text Formatting
+  * Indented texts formatting is preserved.
+  * Many text parsing rules are disabled for indented (preformatted) text blocks to allow code to display unmolested.
+  * Asterisk starting lines get turned into bullet points. 
+  * Indented asterisks are second level bullet points.
+  * Four dashes on the start of a line creates a horizontal rule.
+  * ISBN <number> is munged into a link to Barnes & Nobles. http://www.gnu.org/philosophy/amazon.html - Boycott Amazon.com!
+  * Acme::Bleach style module names are munged into links to CPAN.
+  * Double-underscores around text underline it __like this__.
+  * Double-slashes around text italicizes it //like this//.
+  * Double-vertical-bars around text bolds it ||like this||. 
+  * UUencoded data pasted into a page is turned into a link to image.cgi. image.cgi extracts it and presents it as an image.
+  * Square brackets around text moves it to the end of the page as a footnote and replaces it with a link to the anchor.
+  * WikiWords can be qualified to a specific Wiki, eg Wiki:WikiSquatting - see
+    InterMap
+* Auxillary Scripts
+  * Most auxillary scripts are linked to from the page footer, WikiFooter
+  * assemble.cgi: Words can be expanded in-line for a printable (eg) version: http://www.example.com/assemble.cgi?TinyWiki
+  * recent.cgi: Recently changed pages
+  * spell.cgi: Spell checking. Currently doesn't handle plurals, as plurals aren't in /usr/share/dict/words. Have to work around that.
+  * orphans.cgi: All words sorted by number of references from 0: http://www.example.com/orphans.cgi
+  * metric.cgi: Trust metrics: http://www.example.com/metric.cgi?HomePage for instance. See AdvoWiki for more information.
+  * everything.cgi: Complete list of keywords is at http://www.example.com/everything.cgi
+  * diff.cgi: View previous revisions of a page
+  * podparser.pl: Primarily for command line use. Splits out PerlDoc from the Wiki source files starting with a root page, like assemble.cgi
+  * image.cgi: decodes UUencoded blocks of image data in a page and displays it with the correct MIME header - linked to by wiki.cgi using img src
+  * intermap.cgi: translates Wiki:WikiSquatting style links to a real URL and redirects to it
+  * fogindex.cgi: computes readability indexes on pages using Lingua::EN::Fathom and generates a report - not suitable for online use - too CPU intensive
+* ActiveWikiPages Features
+  * WikiWord munged into a Google search link via ActiveWikiPages code in WikiFooter
+  * SeeOtherWiki links to WikiWiki:WikiWiki when a page with the same name exists there
+  * PagesLinkingHere modifies pages to link back to any page linking to it
+* Misc
+  * All Wiki-related scripts display their source when passed the ?self CGI argument. 
+  * ActiveWikiPages - pages may contain embedded Perl that runs on the server when the page is displayed - most new features will be implemented in terms of this
+  * Token and state based grammar using Perl's m/\G/g trick for cleanliness 
+and easy addition of new rules.
+
+
+||Todo: ||
+
+* Word usage frequency analysis - overused words and pages with similar word usage (possible duplicates or similar subjectmatter)
+* Index type thing like at http://www.xusers.org/index.cgi/InterWiki
+* Possibly reformat StudlyCaps WikiWords with spaces and is, the, a, etc converted to lowercase
+* Page rating/feedback mechanism - via ActiveWikiPages
+* Something like WikiWiki:InterWiki, but saner, lightweight - something like InterWiki here
+* A tool to recurse through different Wiki's InterMap - MoinMoin has a list of other Wikis. 
+If each Wiki did, then the network could be traversed
+* DocBook output - perhaps. Perhaps LaTeX
+* http://www.emacswiki.org/cgi-bin/oddmuse.pl?LaTeX_Extension
+* http://www.usemod.com/cgi-bin/wiki.pl?WikiPatches/RawWikiInclusion
+* RSS feeds from pages via ActiveWikiPages
+* Diagrams - PerlDesignPatterns desprately needs diagrams
+* PerlDoc input - I started on this in another fork - not sure if its a good idea.
+* Image upload script using ActiveWikiPages - somehow? TinyWiki doesn't understand multipart/x-formdata.
+* Extenisable text parser - ActiveWikiPages script should be able to add rules. To support MoinMoin style InterMap linking, PerlDoc, LaTeX, etc
+* diff.cgi should allow viewers to revert to an earlier version of a page. 
+* voting on pages - newbie/advanced, dumb/cool, with reports. AWP needs to recognize Public.* pages
+* report - pages linking to another page that doesn't link back
+* Wiki portal - what was i thinking of?
+* http://laughingmeme.org/cvs2rss/ - CVS commits as an RSS feed - woo!
+* VisualizationCompilerGraphs - use this to do diagrams - a CGI could extract blocks of VCG markup from pages, much like image.cgi does for images.
+
+||Install Notes||
+
+See TinyWikiInstall for some notes on installing this software.
+
+||Thanks To||
+
+TinyWiki uses code from RandalSchwartz in fogindex.cgi, 
+code from DougMiles and from Moogle Stuffy Software in diff.cgi,
+with bug fixes and contributions in wiki.cgi from AlexSchroeder
+and other people whose names I hope I remember soon... oops.
+
+<table cellspacing="0" cellpadding="0"><tr><td><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"></td></tr><tr><td><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"><img src="http://www.example.com/back1.png"></td></tr></table>
+
+The little graphic is meant to be tiled and is care of ForrestCahoon at
+http://www.abstractfactory.org/ See http://www.abstractfactory.org/forrest/gallery/backgrounds.html for more and more about them. Hint: Its a plot of an x, y function.
+
+See Also: TinyWikiPresentation, TinyWikiInstall, TinyWikiBugs, GuestLog, 
+SandBox, WikiFun, TinyWikiMotivation, VisualizationCompilerGraphs
+
+CategoryWiki
+
+$Id: TinyWiki,v 1.358 2005/01/26 00:29:15 httpd Exp $
+
+Pages Linking to This Page:
+
+
+||Comments||
+
+WikiHeader should look at the text and extract first, second and third
+level headers and build an outline of the page. The outline would link
+to anchors in the respective parts of the page. The outline could be
+displayed at the very top of the page, or on the right of the page, 
+perhaps in a separate frame (ewww! frames) or something similar. The
+top of the page would anchors taking you to the top, as http://perldoc.com
+does would probably be the cleanest. - ScottWalters - //Thu Aug 21 18:54:57 2003 216.190.249.170//
+
+I'm going blog feature suggestions here, but keep bug reports at
+TinyWikiBugs - feel free to add your own feature suggestions
+here. - ScottWalters - //Thu Aug 21 19:00:16 2003 216.190.249.170//
+
+TinyWiki headers and footers used by all scripts; spaces in names when presented to the user by the parser; header gunk around edit mode; GodObject should be an appendix with the refactoring stuff moved out into refactoring pages. - from PerlPatternsToDo but belongs here - ScottWalters - //Thu Aug 21 23:41:08 2003 216.190.249.170//
+
+Comments are going to increase the chance of triggering the RaceCondition
+when two people try to edit the same page at the same time. If someone
+edits and saves the page, any comments left in that time will be nuked.
+The CVS way to handle this would be to give each editing user a private
+checkout of the file, and update that file after changes (edits) are
+applied to it. Changes in the text of the document and comments left
+wouldn't clash. If two people tried to edit the text of the document,
+it would probably be okey, and if not, the <<< --- >>> thing would be done.
+WikiHeader could even define rules to marking those up - mere beginning
+of line rules. Less cool solution would be to just shut out the
+second (non-up-to-date) commit. This is what WikiWiki does. - ScottWalters - //Sun Aug 24 03:32:39 2003 216.190.249.72//
+
+WRT the RaceCondition involved in saving changes, I find that its useful to do a simple check for modifications, such as passing ''-M $word . -s $word'' from the original file in a separate query-string parameter, and checking that before writing the change. If someone else has saved a change in the meantime, we can alert the second user to the conflict, show a diff of their submission versus the current file, and leave them on the edit page so they can integrate the changes. SimonCavalletto - //Sun Aug 24 10:02:23 2003 207.18.115.52//
+
+WikiHeader has been modified to support being embedded in other scripts, and changes the links it shows depending on the current action.
+
+  # wiki.cgi
+  if ( $action eq 'edit' || (! -f $word && $action ne 'save') ) {
+    sb_use('WikiHeader');
+  
+  # reverse.cgi
+  $action = 'reverse';
+  sb_use('WikiHeader');
+
+//SimonCavalletto// - //Sun Aug 24 10:10:28 2003 207.18.115.52//
+
+It would be good to add word list and search functions to the set accessible in ActiveWikiPages. I've patched my local wiki.cgi to include the following:
+
+  + *sb_listall = sub { opendir my $dir, '.' or print $! and return;
+  +                     sort grep m/^$origwiki$/o, (readdir $dir) };
+  + *sb_search = sub { grep { sb_read($_) =~ m/\Q$_[0]\E/ } sb_listall() };
+
+This enables the WikiFooter to automatically construct reverse links for category pages:
+
+  if($word =~ /Category/) {
+    print qq{\n<br><hr>\n<b>Items Including $word:</b> <br><br>\n};
+    sb_parse ( join ', ', sb_search( $word ) );
+  }
+
+-- //SimonCavalletto// - //Sun Aug 24 12:09:49 2003 207.18.115.52//
+
+FWIW, the sb_search function described above could be defined in the WikiFooter rather than in wiki.cgi. -- //SimonCavalletto// - //Mon Aug 25 09:42:03 2003 207.18.115.52//
+
+Rather than looking for some specific kind of formatting to find headers, like bold-and-italics for second level headers, consider marking headings by starting lines with =h1 and =h2. POD is our friend and we know what these symbols mean. -- //SimonCavalletto// - //Mon Aug 25 12:30:54 2003 207.18.115.52//
+
+Yeah, I think POD is the way to go too. That makes more sense. That is
+a lot of pages to change, though. Twice in the past I've made a pass 
+through all of the pages to make global changes. This time, a script could
+be written to find the standard H1 headers from PatternTemplate and turn
+those into =head1's. People who don't know PerlDoc will learn very quickly =)
+The parser rules for PerlDoc could be done as user-rules and specified
+in the header with the other user-rules. - ScottWalters - //Mon Aug 25 13:59:13 2003 216.190.249.74//
+
+Random documentation from the code:
+  # sb_use(WikiHeader) and sb_use(WikiFooter) should be sb_parse()
+  # assemble.cgi maintains %alreadydone - a list of words available as anchors in the current document.
+  # parser:
+  # general words, prose, literal text. try not to seek over symbols which might be markup.
+  # parser chews through white space and word characters in chunks, but single steps through punctuation.
+ - //Mon Aug 25 20:08:52 2003 216.190.249.74//
+
+Okey, I won't do something different with the edit form. That is a 
+"middle" page now, per Simon. WikiSearch - perhaps this could index
+pages. Reguardless, search and the little Go box should be hooked up
+to here. RecentChanges, to go in. - //Tue Aug 26 10:33:05 2003 216.190.249.92//
+
+Per Simon, Category pages should do their own reverse indices. Just so
+I remember =) - ScottWalters - //Tue Aug 26 11:15:56 2003 216.190.249.92//
+
+POD markups should be understood. Put them in user rules in the header
+after the next version goes in. - ScottWalters - //Tue Aug 26 12:00:31 2003 216.190.249.92//
+
+New version of TinyWiki core in with code and suggestions integrated
+(some in a modified form). I'm well within my target line count and
+your extensions are built in. I've likely broken some things. The 
+header rocks, and the larger comment forms is killer. Love the new active
+pages. The "cool factor" is very high right now =) I still have some
+catching up to do, but I'll try to stay on it. Thanks,
+- //ScottWalters// - //Thu Aug 28 04:38:30 2003 216.190.249.207//
+
+The way to get at the parser now is to //require 'wiki.cgi';//. The
+previous way was to read it in, do a regex on it, and eval it. Yuck. 
+This should make easier for CGIs, like assemble.cgi, wanting to use
+the parser but having some reason for being a seperate script. 
+//sb_use()// and //sb_read()// will be exported, too, soon. Just
+have to test. (I document when I'm too tired to code). This means
+things can be stacked either way - scripts can use wiki.cgi to
+get at its juicy bits, or things can be run inside of wiki.cgi, both
+much more effectively than before. Progress!
+- //ScottWalters// - //Thu Aug 28 05:15:04 2003 216.190.249.207//
+
+This listed feature...
+
+* Text Formatting
+ * Acme::Bleach style module names are munged into links to CPAN.
+
+
+...doesn't work.  It's interpreted as an InterMap for Acme: now. - //Thu Aug 28 15:22:38 2003 130.126.120.129//
+
+  # sb_search() could be implemented easily in the search page. i don't want to do a brute force search
+  # anyway.
+  #  sub sb_size { ( $_[0] =~ m/^$origwiki$/o and -f $_[0] ) ? -s $_[0] : undef }; # i'm already letting -f through, might as
+ well let -s through XXX
+  # sb_alarm() - i don't want sandboxed code to have access to this. oh, it gets undef'd. still, too bloaty.
+  # sb_caller() - let this through
+  # if ( sb_size("WikiAction\u$action") ) { sb_use("WikiAction\u$action") } - to the header. header will also need to clear $
+  action to avoid defaults
+  #  sub sb_recent { map @$_, sort { $b->[1] <=> $a->[1] } map [ $_, (stat $_)[9] ], @_ ? ( grep m/^$origwiki$/o, @_ ) : sb_l
+  istall(); } # - legalize stat
+- mucking around - these got moved to comments - //ScottWalters//
+
+
+The vote page should maintain a blacklist. When an IP votes for a single
+page 10 times (each vote once) it should be blacklisted. Way too many
+people are running robots that don't follow robots.txt. - //ScottWalters// - //Tue Sep  2 21:50:10 2003 216.190.249.68//
+
+Pipes should run wrappers around other programs where other programs
+need a lot of argument validation. Another little Perl script should
+suck down XML-RSS feeds (with good caching). Something should wrap
+VisualizationCompilerGraphs, xvcg. Something could proxy (with some
+caching) other pages, including perhaps other TinyWiki pages. - //ScottWalters// - //Tue Sep  2 22:26:55 2003 216.190.249.68//
+
+Something for TinyWiki like:
+
+* http://www.perlmonks.com/index.pl?node=FullPage%20Chat
+* http://www.perlmonks.com/index.pl?displaytype=raw&node=showchatmessages
+
+So people can snoop on PerlMonks chatter. XML feeds, too =) - ScottWalters
+
+RSS portals. Todo. A cron job should insert rendered, updated data into pages
+after a special tag or markup. All pages should be scanned for RSS requests.
+- ScottWalters - //Wed Sep 10 22:37:21 2003 216.190.249.64//
+
+As nice as the "pages linking here" feature is, it ends up breaking the "recent changes" feature, since each new link causes the page to be updated, and the RecentChanges page ends up linking to a lot of pages with no real change... Ideally, the PagesLinkingHere data would be stored separately, like in a DBM database, or in a directory of files that parallel the content files... To avoid making such a big change, you could try to hack the code to re-touch the file after adding the new line to reset the modification date back to what it was before the change. -- SimonCavalletto - //Wed Nov 26 14:31:44 2003 207.18.115.52//
+
+<!-- cut - end comments -->
+<!-- cut here - do not remove this comment -->
+* http://c2.com/cgi/wiki?TinyWiki
+* http://www.c2.com/cgi/wiki?TinyWiki
+* http://www.usemod.com/cgi-bin/mb.pl?TinyWiki
+* http://www.emacswiki.org/cgi-bin/alex.pl?WikiSoftware

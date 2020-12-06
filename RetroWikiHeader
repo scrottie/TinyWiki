@@ -293,7 +293,7 @@ rame><br>
     my $x = $2; 
     $x =~s/ +/ /g; 
     $x =~ s/([^a-zA-Z0-9_])/uc sprintf("%%%02x", ord($1))/egs; 
-    print qq{<img src="http://perldesignpatterns.com/diagram.cgi?$x">};
+    print qq{<img src="http://example.com/diagram.cgi?$x">};
     return 1;
   };
 

@@ -1,17 +1,6 @@
 #!/usr/bin/perl
 
-flock DATA, 2;  # one at a time access to this expensive page, please...
-
-if($ENV{HTTP_USER_AGENT} =~ m/Wget/i) {
-  print qq{Location: http://www.perldesignpatterns.com/You_dingdong_-_By_ignoring_robots.txt_youre_using_huge_amounts_of__CPU_time_generating_custom_reports_that_dont_get_you_anything_not_already_in_normal_pages\r\n\r\n};
-  exit 0;
-}
-
-if($ENV{HTTP_USER_AGENT} =~ m/Java/i) {
-  print qq{Location: http://www.fuckoff.com\r\n\r\n};
-  exit 0;
-}
-
+# flock DATA, 2;  # one at a time access to this expensive page, please...
 
 # originally by Doug Miles of Phoenix Perl Mongers, http://phoenix.pm.org
 # bastardized by Scott Walters, scott@illogics.org, also of Phoenix Perl Mongers

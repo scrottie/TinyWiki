@@ -6,7 +6,7 @@ if($ENV{HTTP_USER_AGENT} =~ m/Java/i) {
 }
 
 if($ENV{HTTP_USER_AGENT} =~ m/Wget/i) {
-  print qq{Location: http://www.perldesignpatterns.com/You_fucking_asshole_-_By_ignoring_robots.txt_youre_using_huge_amounts_of_
+  print qq{Location: http://www.example.com/You_fucking_asshole_-_By_ignoring_robots.txt_youre_using_huge_amounts_of_
 _CPU_time_generating_custom_reports_that_dont_get_you_anything_not_already_in_normal_pages\n\n};
   exit 0;
 }

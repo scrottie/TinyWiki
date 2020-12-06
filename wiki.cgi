@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # This is GNU software:  use is permitted -- and encouraged -- but only under the terms set forth at http://www.gnu.org/licenses/gpl.txt.
 # Copyright 2002, 2003, 2006 by Scott Walters, scott@illogics.org, and contributors.
-# See http://perldesignpatterns.com/?TinyWiki for more information on TinyWiki, and how to configure and use it.
+# See https://github.com/scrottie/TinyWiki for more information on TinyWiki, and how to configure and use it.
 # use Carp; use CGI::Carp 'fatalsToBrowser'; *Carp::longmess_heavy = *Carp::longmess;
 exit if $ENV{HTTP_USER_AGENT} =~ m/Java/; # what the FUCK is it with these Java robots pounding the hell out of the site?
 umask 0; my $wiki = qr{[A-Z][a-z]+[A-Z][A-Za-z]+}; my $sn = $ENV{SCRIPT_NAME}; my $rip = $ENV{REMOTE_ADDR};

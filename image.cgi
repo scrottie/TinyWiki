@@ -5,15 +5,14 @@ $word eq 'self' and do { seek DATA, 0, 0; print "Content-type: text/plain\n\n", 
 @ARGV=($word); $text = "\n" . join '', <>;
 
 my $ref = $ENV{HTTP_REFERER};
-unless(
-  $ref =~ m{^http://(?:www\.)?perldesignpatterns\.com/}i or
-  $ref =~ m{^http://(?:www\.)?slowass.net/}i or
-  ! $ref
-) {
-  print qq{Content-type: text/plain\r\n\r\nI prefer not to provide anonymous housing for images for other sites.\n};
-  foreach my $i (keys %ENV) { print $i, ' ', $ENV{$i}, "\n" };
-  exit 0;
-}
+#unless(
+#  $ref =~ m{^http://(?:www\.)?example\.com/}i or
+#  ! $ref
+#) {
+#  print qq{Content-type: text/plain\r\n\r\nI prefer not to provide anonymous housing for images for other sites.\n};
+#  foreach my $i (keys %ENV) { print $i, ' ', $ENV{$i}, "\n" };
+#  exit 0;
+#}
 
 my $imagefn; my $uudata = ''; my $state = 0; my $setstate = sub { $state = shift; 1; };
 while(1) {

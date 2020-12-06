@@ -2,11 +2,6 @@
 
 flock DATA, 2;  # one at a time access to this expensive page, please...
 
-if($ENV{HTTP_USER_AGENT} =~ m/Wget/i) {
-  print qq{Location: http://www.perldesignpatterns.com/You_fucking_asshole_-_By_ignoring_robots.txt_youre_using_huge_amounts_of__CPU_time_generating_custom_reports_that_dont_get_you_anything_not_already_in_normal_pages\n\n};
-  exit 0;
-}
-
 ($word) = map { $_ =~ s/(?:[a-z]+=)||[^A-Za-z]//g; $_ } split /\&/, $ENV{QUERY_STRING};
 
 $word eq 'self' and do {

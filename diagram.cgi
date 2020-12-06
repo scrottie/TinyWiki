@@ -54,15 +54,14 @@ print $img;
 __END__
 
 Hi! This script takes VCG (Visualization for Compiler Graphs) markup URL encoded and returns it rendered as a GIF.
-Home page is http://perldesignpatterns.com/?TinyWiki - this is GNU software. It is protected under the
-GNU GPL, and may only be used under the terms of the GNU GPL license. See http://perldesignpatterns.com/?TinyWiki for
-more information and a full copy of the license.
+It is protected under the GNU GPL, and may only be used under the terms of the GNU GPL license.
+See https://github.com/scrottie/TinyWiki for more information and a full copy of the license.
 
 This script has some paths hardcoded in it: NetPBM is in /usr/local/bin, and so is VCG. 
 NetPBM is available from http://www.acme.com (from the makers of thttpd and xscreensaver), and
 VCG seems to be kind of homeless and unmaintained, but the latest version is archived at
 ftp://freebsd.org/pub/FreeBSD/distfiles/vcg.1.30.r3.17.tgz 
-http://perldesignpatterns.com/?VisualizationCompilerGraphs has some documentation, but the tutorials that
+The VisualizationCompilerGraphs Wiki page in the repo has some documentation, but the tutorials that
 come with VCG are invaluable - VCG is very powerful, and multifasceted.
 
 # junk...

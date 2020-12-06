@@ -23,7 +23,7 @@ Content-type: text/xml
 
   <title>Perl Design Patterns - Software Engineering Meets Perl</title>
 
-  <link>http://www.perldesignpatterns.com</link>
+  <link>http://www.example.com</link>
 
   <description>Most Perl is written to do a quickie job but sometimes these
 hacks grow, and sometimes Perl is even selected for large projects.
@@ -72,7 +72,7 @@ foreach(sb_recent()) {
 
       <item>
         <title>$word</title>
-        <link>http://www.perldesignpatterns.com/?$word</link>
+        <link>http://www.example.com/?$word</link>
         <description>$word edited on $date at $time</description>
       </item>
 

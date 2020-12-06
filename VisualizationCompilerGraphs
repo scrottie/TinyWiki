@@ -1,0 +1,160 @@
+...or, VCG.
+
+ftp://ftp.freebsd.org/pub/FeeBSD/distfiles/vcg.1.30.r3.17.tgz
+
+An ultra-nifty diagraming package. Reads text files containing markup code.
+
+These are just some personal notes. I'm thinking of using this most excellent package to do the diagrams here,
+for PerlDesignPatterns. 
+
+Minimal example:
+
+  graph: { 
+  title: "Civilisation Advances"
+  x: 30
+  y: 30
+  height: 700
+  width: 700
+  # nodes and edges
+  }
+
+Some more root-level options:
+
+  layoutalgorithm: minbackward
+  layoutalgorithm: minbackward
+  layoutalgorithm: mindepth
+  layoutalgorithm: maxdepth
+  layoutalgorithm: tree
+  layoutalgorithm: dfs # some edges go up. we give them lower priority, and the diagram is structured according to the down edges.
+  crossing_weight: median
+  crossing_weight: bary
+  crossing_weight: barymedian
+  crossing_weight: medianbary
+  display_edge_labels: yes
+  nearedges: no
+  shrink: 2
+  stretch: 1
+  color: lightgreen
+  node.color: pink
+  edge.color: red
+  edge.backarrowcolor: pink
+  edge.backarrowstyle: solid
+  edge.backarrowsize: 10
+  port_sharing: yes
+  port_sharing: no
+  arrowmode: fixed 
+  arrowmode: free
+  layout_nearfactor: 0
+  layout_upfactor: 40 
+  xbase: 75 
+  xspace: 10 
+  xlspace: 10 
+  xraster: 75
+  yspace: 30
+  priority_phase: yes
+  straight_phase: yes
+  foldnode.shape: triangle
+
+
+Minimal node syntax:
+
+  node: { title: "01" label: "Irrigation" }
+
+Minimal edge syntax:
+
+  edge: { color: lightblue sourcename: "05" targetname:"11" }
+
+Example edge and node:
+
+  node: {  title: "Reactive Engine" shape: rhomb width: 144 height: 90 color: yellow bordercolor: blue }
+  node: {  title: "Alto" shape: ellipse color: darkgreen textcolor: lightyellow }
+
+  edge: { sourcename: "Reactive Engine" targetname: "Alto" }
+
+
+Maximal node syntax:
+
+  node: {
+    title: "A2"
+    loc: { x: 300 y: 10 } 
+    shrink: 3
+    stretch: 2
+    label: 
+  "Foo bar
+  Baz qux"
+    textmode: left_justify
+    borderwidth: 10
+    color: lightblue
+    textcolor: lightyellow
+    bordercolor: red
+    shape: box
+    anchor: 1
+    level: 1 horizontal_order: 1
+  }
+
+  # or...
+
+  textmode: right_justify 
+  textmode: center # center is default
+  shape: rhomb
+  shape: triangle
+  shape: ellipse
+  shape: circle
+  level: 0 # 1, 2, 3, etc. litteraly, which row to force it into.
+  
+
+Maximal edge syntax:
+
+  edge: { sourcename: "E1" targetname: "E2" 
+          linestyle: continuous 
+          thickness:a 4
+          label: "continuous"
+          arrowsize: 13
+          arrowstyle: line
+          priority: 4       # has to do with sorting things onto the screen according to the algorithm
+  }
+
+  # or...
+
+  linestyle: dotted
+  linestyle: dashed
+
+  # or...
+
+   nearedge:  { sourcename: "502952" targetname: "T2" 
+     color: blue thickness: 6  }
+
+Near Edges:
+
+Nearedges are horizontal edges that constain the two adjacent
+nodes to be placed directly neighbored at the same level.
+Bent nearedges are edges that are bent at the label, and
+the source node and the edge label form a near edge. This gives
+the typical appearance of decision branches.
+(From the documentation)
+
+  foldnode.shape: triangle
+  splines: yes
+  layout_nearfactor: 0
+  layout_upfactor: 40
+  manhatten_edges: yes 
+
+Options:
+
+  -view pfish
+
+
+||See Also||
+
+* PerlDesignPatterns
+* FlowCharts
+* TinyWiki
+* TinyCGI:diagram.cgi?self
+
+External Pages Linking to This Page:
+
+<!-- cut here - do not remove this comment - added by PagesLinkingHere -->
+* http://www.gnufans.net/intrspctr.pl?ScottWalters
+* http://perldesignpatterns.com
+* http://atlas.iskon.hr/perldesignpatterns/
+* http://theoryx5.uwinnipeg.ca/CPAN/data/Object-PerlDesignPatterns/PerlDesignPatterns.html

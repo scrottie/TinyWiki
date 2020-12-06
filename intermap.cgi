@@ -6,7 +6,7 @@ $word eq 'self' and do { seek DATA, 0, 0; print "Content-type: text/plain\n\n", 
 
 # assemble.cgi etc will link here incorrectly...?
 # urls like:
-# www.perldesignpatterns.com/intermap.cgi?wiki=TinyCGI&word=reverse.cgi?CategoryBook
+# www.example.com/intermap.cgi?wiki=TinyCGI&word=reverse.cgi?CategoryBook
 # $word =~ s/.*\?//; 
 # no, that is exactly correct - for TinyCGI
 
